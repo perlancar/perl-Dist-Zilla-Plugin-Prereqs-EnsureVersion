@@ -29,14 +29,14 @@ sub setup_installer {
     for my $phase (sort keys %$prereqs_hash) {
         for my $rel (sort keys %{$prereqs_hash->{$phase}}) {
             my $versions = $prereqs_hash->{$phase}{$rel};
-            for my $mod (sort keys %$prereqs) {
+            for my $mod (sort keys %$versions) {
                 my $ver = $versions->{$mod};
                 my $minver = $pmversions->{$mod};
                 next unless defined $minver;
                 if (version->parse($minver) > version->parse($ver)) {
                     $self->log_fatal([
                         "Prerequisite %s is below minimum version (%s vs %s)",
-                        $ver, $minver]);
+                        $mod, $ver, $minver]);
                 }
             }
         }
