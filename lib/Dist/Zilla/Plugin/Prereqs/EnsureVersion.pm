@@ -20,7 +20,14 @@ sub setup_installer {
 
     state $pmversions = do {
         my $path = File::HomeDir->my_home . "/pmversions.ini";
-        my $hoh = (-e $path) ? Config::IOD::Reader->new->read_file($path) : {};
+        my $hoh;
+        if (-e $path) {
+            $hoh = Config::IOD::Reader->new->read_file($path);
+        } else {
+            $self->log(["File %s does not exist, assuming ".
+                            "no minimum versions are specified", $path]);
+            $hoh = {};
+        }
         $hoh->{GLOBAL} // {};
     };
 
