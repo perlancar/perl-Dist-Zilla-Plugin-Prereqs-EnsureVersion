@@ -20,7 +20,7 @@ sub setup_installer {
 
     state $pmversions = do {
         my $path = File::HomeDir->my_home . "/pmversions.ini";
-        my $hoh = Config::IOD::Reader->new->read_file($path);
+        my $hoh = (-e $path) ? Config::IOD::Reader->new->read_file($path) : {};
         $hoh->{GLOBAL} // {};
     };
 
