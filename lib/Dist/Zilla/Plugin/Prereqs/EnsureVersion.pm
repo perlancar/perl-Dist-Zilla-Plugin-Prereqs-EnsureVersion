@@ -8,14 +8,14 @@ use strict;
 use warnings;
 
 use Moose;
-with 'Dist::Zilla::Role::InstallTool';
+with 'Dist::Zilla::Role::AfterBuild';
 
 use namespace::autoclean;
 
 use Config::IOD::Reader;
 use File::HomeDir;
 
-sub setup_installer {
+sub after_build {
     my ($self) = @_;
 
     state $pmversions = do {
