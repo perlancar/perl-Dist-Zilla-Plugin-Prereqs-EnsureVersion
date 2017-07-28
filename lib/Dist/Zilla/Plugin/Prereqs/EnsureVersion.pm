@@ -34,7 +34,9 @@ sub after_build {
     my $prereqs_hash = $self->zilla->prereqs->as_string_hash;
 
     for my $phase (sort keys %$prereqs_hash) {
+        next if $phase =~ /^x_/;
         for my $rel (sort keys %{$prereqs_hash->{$phase}}) {
+            next if $rel =~ /^x_/;
             my $versions = $prereqs_hash->{$phase}{$rel};
             for my $mod (sort keys %$versions) {
                 my $ver = $versions->{$mod};
@@ -75,6 +77,8 @@ F<~/pmversions.ini> containing list of modules and their mininum versions. Then,
 the plugin will check all prereqs against this list. If minimum version is not
 met (e.g. the prereq says 0 or a smaller version) then the build will be
 aborted.
+
+Currently, prereqs with custom (/^x_/) phase or relationship are ignored.
 
 Ideas for future version: ability to blacklist certain versions, specify version
 ranges, e.g.:
