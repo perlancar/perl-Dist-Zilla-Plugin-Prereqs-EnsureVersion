@@ -62,7 +62,7 @@ __PACKAGE__->meta->make_immutable;
 
 In F<~/pmversions.ini>:
 
- Log::Any::IfLOG=0.07
+ Log::ger=0.019
  File::Write::Rotate=0.28
 
 In F<dist.ini>:
