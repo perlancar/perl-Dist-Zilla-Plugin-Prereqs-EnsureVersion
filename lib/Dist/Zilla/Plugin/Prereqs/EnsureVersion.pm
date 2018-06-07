@@ -14,23 +14,10 @@ use namespace::autoclean;
 
 use Config::IOD::Reader;
 use File::HomeDir;
+use PMVersions::Util qw(version_from_pmversions);
 
 sub after_build {
     my ($self) = @_;
-
-    state $pmversions = do {
-        my $path = $ENV{PMVERSIONS_PATH} //
-            File::HomeDir->my_home . "/pmversions.ini";
-        my $hoh;
-        if (-e $path) {
-            $hoh = Config::IOD::Reader->new->read_file($path);
-        } else {
-            $self->log(["File %s does not exist, assuming ".
-                            "no minimum versions are specified", $path]);
-            $hoh = {};
-        }
-        $hoh->{GLOBAL} // {};
-    };
 
     my $prereqs_hash = $self->zilla->prereqs->as_string_hash;
 
@@ -41,7 +28,7 @@ sub after_build {
             my $versions = $prereqs_hash->{$phase}{$rel};
             for my $mod (sort keys %$versions) {
                 my $ver = $versions->{$mod};
-                my $minver = $pmversions->{$mod};
+                my $minver = version_from_pmversions($mod);
                 next unless defined $minver;
                 if (version->parse($minver) > version->parse($ver)) {
                     $self->log_fatal([
@@ -92,7 +79,8 @@ ranges, e.g.:
 =head2 PMVERSIONS_PATH
 
 String. Set location of F<pmversions.ini> instead of the default
-C<~/pmversions.ini>. Example: C</etc/minver.conf>.
+C<~/pmversions.ini>. Example: C</etc/minver.conf>. Note that this is actually
+observed by in L<PMVersions::Util>.
 
 
 =head1 SEE ALSO
