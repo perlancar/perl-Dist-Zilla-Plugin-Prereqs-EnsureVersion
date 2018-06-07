@@ -19,7 +19,8 @@ sub after_build {
     my ($self) = @_;
 
     state $pmversions = do {
-        my $path = File::HomeDir->my_home . "/pmversions.ini";
+        my $path = $ENV{PMVERSIONS_PATH} //
+            File::HomeDir->my_home . "/pmversions.ini";
         my $hoh;
         if (-e $path) {
             $hoh = Config::IOD::Reader->new->read_file($path);
@@ -84,6 +85,14 @@ Ideas for future version: ability to blacklist certain versions, specify version
 ranges, e.g.:
 
  Module::Name = 1.00-2.00, != 1.93
+
+
+=head1 ENVIRONMENT
+
+=head2 PMVERSIONS_PATH
+
+String. Set location of F<pmversions.ini> instead of the default
+C<~/pmversions.ini>. Example: C</etc/minver.conf>.
 
 
 =head1 SEE ALSO
