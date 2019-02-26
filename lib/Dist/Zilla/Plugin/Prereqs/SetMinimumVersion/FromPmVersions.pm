@@ -8,13 +8,13 @@ use strict;
 use warnings;
 
 use Moose;
-with 'Dist::Zilla::Role::MetaProvider';
+with 'Dist::Zilla::Role::PrereqSource';
 
 use namespace::autoclean;
 
 use PMVersions::Util qw(version_from_pmversions);
 
-sub metadata {
+sub register_prereqs {
     my ($self) = @_;
 
     my $prereqs_hash = $self->zilla->prereqs->as_string_hash;
@@ -32,11 +32,13 @@ sub metadata {
                     $self->log_debug([
                         "Setting minimum version of prerequisite %s (%s %s) to %s",
                         $mod, $phase, $rel, $minver]);
-                    $self->register_prereqs({phase => $phase, type => $rel}, $mod, $minver);
+                    $self->zilla->register_prereqs({phase => $phase, type => $rel}, $mod, $minver);
                 }
             }
         }
     }
+
+    {};
 }
 
 __PACKAGE__->meta->make_immutable;
