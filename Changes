@@ -1,27 +1,3 @@
-0.050   2018-06-07 (PERLANCAR)
-
-	- [refactor] Split pmversions.ini-related functionality to
-	  PMVersions::Util.
-
-	- Observe PMVERSIONS_PATH.
-
-
-0.04    2017-07-28 (PERLANCAR)
-
-	- Ignore prereqs with custom (/^x_/) phase & relationship.
-
-
-0.03    2017-07-07 (PERLANCAR)
-
-	- Switch from (ab)using InstallTool phase to using AfterBuild phase
-	  to do our stuffs, to be compatible with DZP:StaticInstall.
-
-
-0.02     2017-07-04 (PERLANCAR)
-
-         - Do not die on missing ~/pmversions.ini [thanks José Joaquín Atria].
-
-
-0.01     2016-01-19 (PERLANCAR)
+0.001    2019-02-26 (PERLANCAR) (unreleased)
 
          - First release.

@@ -1,4 +1,4 @@
-Dist-Zilla-Plugin-Prereqs-EnsureVersion-*
+Dist-Zilla-Plugin-Prereqs-SetMinimumVersion-FromPmVersions-*
 .build
 *~
 nytprof*

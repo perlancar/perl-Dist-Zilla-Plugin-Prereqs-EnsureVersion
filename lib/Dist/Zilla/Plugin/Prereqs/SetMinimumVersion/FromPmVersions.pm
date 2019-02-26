@@ -1,4 +1,4 @@
-package Dist::Zilla::Plugin::Prereqs::EnsureVersion;
+package Dist::Zilla::Plugin::Prereqs::SetMinimumVersion::FromPmVersions;
 
 # DATE
 # VERSION
@@ -8,15 +8,13 @@ use strict;
 use warnings;
 
 use Moose;
-with 'Dist::Zilla::Role::AfterBuild';
+with 'Dist::Zilla::Role::MetaProvider';
 
 use namespace::autoclean;
 
-use Config::IOD::Reader;
-use File::HomeDir;
 use PMVersions::Util qw(version_from_pmversions);
 
-sub after_build {
+sub metadata {
     my ($self) = @_;
 
     my $prereqs_hash = $self->zilla->prereqs->as_string_hash;
@@ -31,9 +29,10 @@ sub after_build {
                 my $minver = version_from_pmversions($mod);
                 next unless defined $minver;
                 if (version->parse($minver) > version->parse($ver)) {
-                    $self->log_fatal([
-                        "Prerequisite %s is below minimum version (%s vs %s)",
-                        $mod, $ver, $minver]);
+                    $self->log_debug([
+                        "Setting minimum version of prerequisite %s (%s %s) to %s",
+                        $mod, $phase, $rel, $minver]);
+                    $self->register_prereqs({phase => $phase, type => $rel}, $mod, $minver);
                 }
             }
         }
@@ -42,7 +41,7 @@ sub after_build {
 
 __PACKAGE__->meta->make_immutable;
 1;
-# ABSTRACT: Make sure that prereqs have minimum versions
+# ABSTRACT: Set minimum version of prereqs from pmversions.ini
 
 =for Pod::Coverage .+
 
@@ -55,23 +54,17 @@ In F<~/pmversions.ini>:
 
 In F<dist.ini>:
 
- [Prereqs::EnsureVersion]
+ [Prereqs::SetMinimumVersion::FromPmVersions]
 
 
 =head1 DESCRIPTION
 
-This plugin will check versions specified in prereqs. First you create
-F<~/pmversions.ini> containing list of modules and their mininum versions. Then,
-the plugin will check all prereqs against this list. If minimum version is not
-met (e.g. the prereq says 0 or a smaller version) then the build will be
-aborted.
-
-Currently, prereqs with custom (/^x_/) phase or relationship are ignored.
-
-Ideas for future version: ability to blacklist certain versions, specify version
-ranges, e.g.:
-
- Module::Name = 1.00-2.00, != 1.93
+This plugin is the counterpart of
+L<[Prereqs::EnsureVersion]|Dist::Zilla::Plugin::Prereqs::EnsureVersion>.
+[Prereqs::EnsureVersion] checks prereqs and aborts the build when a prereq
+specifies version less than specified in F<pmversions.ini>.
+[Prereqs::SetMinimumVersion::FromPmVersions] on the other hand, sets a prereq's
+minimum version to that specified in F<pmversions.ini>.
 
 
 =head1 ENVIRONMENT
@@ -85,8 +78,4 @@ observed by in L<PMVersions::Util>.
 
 =head1 SEE ALSO
 
-L<Dist::Zilla::Plugin::MinimumPrereqs>
-
-There are some plugins on CPAN related to specifying/detecting Perl's minimum
-version, e.g.: L<Dist::Zilla::Plugin::MinimumPerl>,
-L<Dist::Zilla::Plugin::Test::MinimumVersion>.
+L<Dist::Zilla::Plugin::Prereqs::EnsureVersion>
